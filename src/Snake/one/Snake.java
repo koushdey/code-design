@@ -24,32 +24,34 @@ public class Snake
             Direction.LEFT);
         Snake.playSnakeGame(directions);
 
-        //Snake.playSnakeGame(Direction.RIGHT);
+        //Snake.playSnakeGame(Direction.RIGHT);  //LEVEL 1 & 2
     }
 
     private static void playSnakeGame(List<Direction> directions) throws InterruptedException{
+    //private static void playSnakeGame(Direction direction) throws InterruptedException{  //LEVEL 1 & 2
         SnakeGameImpl snakeGame = new SnakeGameImpl();
-        for(Direction direction : directions){
+        for(Direction direction : directions){  //from
             snakeGame.moveSnake(direction);
             if(snakeGame.isGameOver()){
                 System.out.println("Snake Collided!! Game Over :( ");
                 return;
             }
             Thread.sleep(1000);
-        }
-    }
-
-    /*private static void playSnakeGame(Direction direction) throws InterruptedException{
-        SnakeGameImpl snakeGame = new SnakeGameImpl();
-        snakeGame.setDirection(direction);
+        }                                      //to
+        
+        /*
+        snakeGame.setDirection(direction);      //LEVEL 1 & 2
         for(int i=0; i < 60 ; i++){
             Thread.sleep(1000);
             snakeGame.setDirection(direction);
+            System.out.println(snakeGame.render()); //LEVEL 2 AVOID
             if(snakeGame.isGameOver()){
                 System.out.println("Snake Collided!! Game Over :( ");
                 return;
             }
-
         }
-    } */
+        */
+         
+    }
+
 }
