@@ -2,6 +2,7 @@ package CostExplorer.one;
 
 public enum Plan {
 
+    //TRIAL(0.00), //LEVEL 1
     BASIC(9.99),
     STANDARD(49.99),
     PREMIUM(249.99);
