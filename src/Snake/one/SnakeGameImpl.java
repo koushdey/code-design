@@ -1,6 +1,6 @@
 package com.atlassian;
 
-//import java.time.Duration;
+//import java.time.Duration;        //LEVEL 1 & 2
 import java.util.Deque;
 import java.util.LinkedList;
 
@@ -9,15 +9,16 @@ public class SnakeGameImpl implements SnakeGame{
     private int moveCounter = 0;
     private Snake snake;
 
-    //private Direction currDirection;
-    //private long currTimeStamp = -1;
-    //private long prevTimeStamp;
-    //private boolean isGameOver = false;
+    //private Direction currDirection;      //LEVEL 1 & 2
+    //private long currTimeStamp = -1;      //LEVEL 1 & 2
+    //private long prevTimeStamp;           //LEVEL 1 & 2
+    //private boolean isGameOver = false;   //LEVEL 1 & 2
     SnakeGameImpl(){
         snake = new Snake();
     }
 
-    /*public void setDirection(Direction direction) {
+    /*
+    public void setDirection(Direction direction) {       //LEVEL 1 & 2
         this.currDirection = direction;
         this.prevTimeStamp = this.currTimeStamp;
         this.currTimeStamp = System.currentTimeMillis();
@@ -29,7 +30,6 @@ public class SnakeGameImpl implements SnakeGame{
         if(prevTimeStamp != -1)
         {
             long diffInSecs = Duration.ofMillis(currTimeStamp-prevTimeStamp).getSeconds();
-            System.out.println("Diff in secs" + diffInSecs);
 
             while(diffInSecs-- > 0){
                 this.moveSnake(currDirection);
@@ -40,7 +40,9 @@ public class SnakeGameImpl implements SnakeGame{
                 }
             }
         }
-    }*/
+    }
+    */
+
     public void moveSnake(Direction direction) {
         snake.move(direction);
         if(++moveCounter % 5 == 0){
@@ -51,22 +53,35 @@ public class SnakeGameImpl implements SnakeGame{
     }
 
     public boolean isGameOver() {
-            //if(isGameOver)
+            //if(isGameOver)        //LEVEL 1 & 2
             //    return true;
             return snake.isHeadColliding();
     }
+
+    /*
+    public String render() {        //LEVEL 2
+        if (!isGameOver()) {
+            update();
+        }
+        return snake.render();    //+". Game " + (isGameOver() ? "over" : "ongoing");
+    }
+    */
 
     private class Snake {
         private Deque<Cell> snake;
         private Cell removedCell;
 
-        int BOARD_SIZE = 8;
+        int BOARD_SIZE = 20;
+        //int BOARD_SIZE = 8; //LEVEL 1 & 2
 
         Snake(){
             snake = new LinkedList<>();
             snake.addLast(new Cell(10, 10));
             snake.addLast(new Cell(9, 10));
             snake.addLast(new Cell(8, 10));
+            //snake.addLast(new Cell(4, 4));    //LEVEL 1 & 2
+            //snake.addLast(new Cell(3, 4));    //LEVEL 1 & 2
+            //snake.addLast(new Cell(2, 4));    //LEVEL 1 & 2
 
             removedCell = null;
         }
@@ -101,6 +116,22 @@ public class SnakeGameImpl implements SnakeGame{
             else
                 return pos;
         }
+
+        /*
+        public String render() {      //LEVEL 2
+            StringBuilder sb = new StringBuilder();
+    
+            sb.append("><> ");
+    
+            for(Cell cell : snake){
+                sb.append(cell.toString()+", ");
+            }
+            sb.setLength(sb.length()-2);
+            sb.append(" -->");
+    
+            return sb.toString();
+        }
+        */
     }
 
     record Cell(int x, int y){
