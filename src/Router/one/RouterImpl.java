@@ -45,7 +45,7 @@ public class RouterImpl implements Router {
         if(!this.routeHandler.containsKey(path)) {
             throw new RuntimeException("No result found");
             /*
-            return patternHandler.stream()      //LEVEL 1
+            return patternHandler.stream()      //LEVEL 1 & 2
             .filter(entry -> entry.getKey().matcher(path).matches())
             .findFirst().get().getValue();
             */
