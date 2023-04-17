@@ -1,26 +1,50 @@
 package Router.one;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+//import java.util.regex.Pattern;       //LEVEL 1 & 2
 
 public class RouterImpl implements Router {
 
     private Map<String, String> routeHandler;
+    //private List<Map.Entry<Pattern, String>> patternHandler;      //LEVEL 1 & 2
 
     RouterImpl(){
         routeHandler = new HashMap<>();
+        //patternHandler = new ArrayList<>();       //LEVEL 1 & 2
     }
 
     @Override
     public RouterImpl withRoute(String path, String result) {
-        this.routeHandler.put(path, result);
+        //if(!path.contains("*")){      //LEVEL 1
+            this.routeHandler.put(path, result);
+        //}
+        /*
+        else {          //LEVEL 1
+            String[] tokens = path.split("\\*",-1);  // "\\*" is regex, -1 for handling * at the end of pattern
+            int len = tokens.length;
+            StringBuilder regex = new StringBuilder();
+            for(String token : tokens){
+                regex.append(token);
+                if((--len > 0))
+                    regex.append(".*");     //Regex: \/foo\/.*\/bar\/.*
+            }
+            Pattern pattern = Pattern.compile(regex.toString());
+            this.patternHandler.add(Map.entry(pattern, result));
+        }
+        */
         return this;
     }
 
     @Override
     public String route(String path) {
-        if(!this.routeHandler.containsKey(path))
+        if(!this.routeHandler.containsKey(path)) {
             throw new RuntimeException("No result found");
+            /*
+            return patternHandler.stream()      //LEVEL 1
+            .filter(entry -> entry.getKey().matcher(path).matches())
+            .findFirst().get().getValue();
+            */
+        }
         return this.routeHandler.get(path);
     }
     
