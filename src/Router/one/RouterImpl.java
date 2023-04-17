@@ -16,17 +16,22 @@ public class RouterImpl implements Router {
     @Override
     public RouterImpl withRoute(String path, String result) {
         //if(!path.contains("*")){      //LEVEL 1
+        //if(!(path.contains("*") || path.contains(":"))){      //LEVEL 2
             this.routeHandler.put(path, result);
         //}
         /*
-        else {          //LEVEL 1
+        else {          //LEVEL 1 & 2
             String[] tokens = path.split("\\*",-1);  // "\\*" is regex, -1 for handling * at the end of pattern
+                                                     // ":[^/]*" for LEVEL 2
+                                                     // matches string after colon till forward slash.
             int len = tokens.length;
             StringBuilder regex = new StringBuilder();
             for(String token : tokens){
                 regex.append(token);
                 if((--len > 0))
                     regex.append(".*");     //Regex: \/foo\/.*\/bar\/.*
+                                            //LEVEL 2 Regex: \/foo\/[^/]+\/bar\/[^/]+
+                                            // since lookup will not have colon params
             }
             Pattern pattern = Pattern.compile(regex.toString());
             this.patternHandler.add(Map.entry(pattern, result));
