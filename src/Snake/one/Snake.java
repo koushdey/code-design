@@ -40,16 +40,16 @@ public class Snake
         }                                      //to
         
         /*
-        snakeGame.setDirection(direction);      //LEVEL 1 & 2
-        for(int i=0; i < 60 ; i++){
+        snakeGame.setDirection(direction);      //LEVEL 1
+        Thread.sleep(30000);                //LEVEL 1
+        //LEVEL 2
+        for(int i = 0; i< 30; i++){
             Thread.sleep(1000);
-            snakeGame.setDirection(direction);
-            System.out.println(snakeGame.render()); //LEVEL 2 AVOID
-            if(snakeGame.isGameOver()){
-                System.out.println("Snake Collided!! Game Over :( ");
-                return;
-            }
+            System.out.println(snakeGame.render());
         }
+        //////
+        snakeGame.setDirection(Direction.UP);
+        return snakeGame.isGameOver();
         */
          
     }
