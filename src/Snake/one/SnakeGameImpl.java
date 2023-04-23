@@ -20,21 +20,19 @@ public class SnakeGameImpl implements SnakeGame{
     /*
     public void setDirection(Direction direction) {       //LEVEL 1 & 2
         this.currDirection = direction;
-        this.prevTimeStamp = this.currTimeStamp;
-        this.currTimeStamp = System.currentTimeMillis();
         if(isGameOver) return;
         update();
     }
 
     private void update(){
-        if(prevTimeStamp != -1)
-        {
-            long diffInSecs = Duration.ofMillis(currTimeStamp-prevTimeStamp).getSeconds();
+        this.prevTs = this.currTs;
+        this.currTs = System.currentTimeMillis();
+        if(prevTs != -1){
+            long diffInSecs = Duration.ofMillis(currTs - prevTs).getSeconds();
 
             while(diffInSecs-- > 0){
                 this.moveSnake(currDirection);
                 if(this.isGameOver()){
-                    System.out.println("GAMEOVER!!");
                     this.isGameOver = true;
                     return;
                 }
@@ -55,15 +53,13 @@ public class SnakeGameImpl implements SnakeGame{
     public boolean isGameOver() {
             //if(isGameOver)        //LEVEL 1 & 2
             //    return true;
+            update();
             return snake.isHeadColliding();
     }
 
     /*
     public String render() {        //LEVEL 2
-        if (!isGameOver()) {
-            update();
-        }
-        return snake.render();    //+". Game " + (isGameOver() ? "over" : "ongoing");
+        return !isGameOver() ? snake.render() : "GAME OVER!!";
     }
     */
 
