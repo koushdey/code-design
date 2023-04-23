@@ -1,75 +1,41 @@
-package CostExplorer.one;
+package com.atlassian.CostExplorer;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+//import java.util.Optional;        //LEVEL 1
+//import java.util.Map;   //LEVEL 2
 //import java.util.stream.*;  //LEVEL 2
 
-public class CostExplorerImpl implements CostExplorer {
 
-    private Plan plan;
-    private LocalDate startDate;
-    //private List<Subscription> subscriptions;     //LEVEL 1 comment startDate & plan
-    
-    //private List<Product> products;	//LEVEL 2 comment above lines
-    //private Map<String, Double[]> pricingReportMap;
-    
-    private Double[] prices;
-    
+public class CostExplorerImpl implements CostExplorer{
+    private Product product;
+    private HashMap<String, Double[]> pricingReportMap;
+    //private List<Product> products;     //LEVEL 2 
     private DecimalFormat df = new DecimalFormat("#.##");
 
+    
     CostExplorerImpl(Customer customer){
-        this.plan = customer.product().subscription().plan();
-        this.startDate = customer.product().subscription().starDate();
-        //this.subscriptions = customer.product().subscriptions();    //LEVEL 1 comment startDate & plan
-        prices = new Double[12];
-        Arrays.fill(prices, 0.00);
-        
-        /* LEVEL 2 Comment all lines above
-        this.products = customer.products();	
-        pricingReportMap = new HashMap<>();	
-        for(Product product : products){	
-            Double[] prices = new Double[12];	
-            Arrays.fill(prices, 0.00);	
-            pricingReportMap.put(product.Name(), prices);	
-        }	
-        processBilling();
-        */
+        pricingReportMap = new HashMap<>();
+
+        if(!customer.name().isEmpty() && customer.product()!= null) {
+            this.product = customer.product();
+
+            Double[] expense = new Double[12];
+            Arrays.fill(expense, 0.00);
+            pricingReportMap.put(product.name(), expense);
+
+            processBilling();
+        }    
     }
 
     @Override
     public List<Double> monthlyCost() {
-        int month = startDate.getMonthValue();
-        int day = startDate.getDayOfMonth();
-
-        prices[month-1]  = Double.valueOf(df.format(plan.getPrice() - plan.getPrice()/30*day));
-        for(int i=month; i < 12; i++){
-            prices[i] = plan.getPrice();
-        }
-        return Arrays.asList(prices);
-        
-        /* LEVEL 1 comment above lines
-        Subscription billedSubscription;
-        Optional<Subscription> trialSub = subscriptions.stream().filter(o -> o.plan().equals(Plan.TRIAL)).findAny();
-        if(!trialSub.isPresent()){
-            billedSubscription = subscriptions.get(0);  
-        } else{
-            billedSubscription = subscriptions.get(1);
-        }
-        Plan billedPlan = billedSubscription.plan();
-        int month = billedSubscription.starDate().getMonthValue();
-        int day = billedSubscription.starDate().getDayOfMonth();
-        DecimalFormat df = new DecimalFormat("#.##");
-        prices[month-1]  = Double.valueOf(df.format(billedPlan.getPrice() - billedPlan.getPrice()/30*day));
-        for(int i=month; i < 12; i++){
-            prices[i] = billedPlan.getPrice();
-        }
-        return Arrays.asList(prices);
-        */
-        //-------------------------------//
-        /*  LEVEL 2 comment all lines in the method
-        Double[] monthlyBill = new Double[12];
-        Arrays.fill(monthlyBill, 0.00);
+        /*-------- LEVEL 2 ----------
+        Double[] monthlyBill = new Double[12];    
+        Arrays.fill(monthlyBill, 0.00);           
 
         int index = 0;
         while(index < 12){
@@ -80,20 +46,20 @@ public class CostExplorerImpl implements CostExplorer {
         }
         
         return Arrays.asList(monthlyBill);
-        */
+        -------- LEVEL 2 ----------*/
+        return Arrays.asList(pricingReportMap.get(product.name()));
     }
 
     @Override
     public Double yearlyCost() {
-        double finalPrice = 0.00;
-        for(double price : prices){
-            finalPrice += price;
-        }
-        return finalPrice;
+        Double totalCost = 0.00;
+        for(Double cost : pricingReportMap.get(product.name())){
+            totalCost += cost;
+        } 
+        return totalCost;
     }
-    
-    // LEVEL 2 All methods below
-    /*
+
+    /*-------- LEVEL 2 ----------
     @Override
     public Map<String, Double> yearlyCostPerProduct() {
         Map<String, Double> result= pricingReportMap.entrySet().stream()
@@ -110,31 +76,34 @@ public class CostExplorerImpl implements CostExplorer {
             d -> Arrays.stream(d).mapToDouble(Double::doubleValue).sum())
             .sum();
     }
+    -------- LEVEL 2 ----------*/
 
     private void processBilling(){
-        for(Product product : products){
-            Subscription billedSubscription;
+        //for(Product product : products){  //LEVEL 2
+            if(!product.name().isEmpty() && product.subscription() != null ){
+                //&& !product.subscriptions().isEmpty()){     //LEVEL 1
+                 Subscription billedSubscription = product.subscription();
+                //Optional<Subscription> billedSubscription = product.subscriptions().stream()    //LEVEL 1
+                //    .filter(o -> !o.plan().equals(Plan.TRIAL)).findAny(); //LEVEL 1
+                
+                //if(billedSubscription.isPresent()){ //LEVEL 1
+                    Plan billedPlan = billedSubscription.plan();
+                    int month = LocalDate.parse(billedSubscription.startDate()).getMonthValue();
+                    int day = LocalDate.parse(billedSubscription.startDate()).getDayOfMonth();
 
-            Optional<Subscription> trialSub = product.subscriptions().stream().filter(o -> o.plan().equals(Plan.TRIAL)).findAny();
-            if(!trialSub.isPresent()){
-                billedSubscription = product.subscriptions().get(0);  
-            } else{
-                billedSubscription = product.subscriptions().get(1);
+                    //Plan billedPlan = billedSubscription.get().plan();        //LEVEL 1
+                    //int month = LocalDate.parse(billedSubscription.get().startDate()).getMonthValue();    //LEVEL 1
+                    //int day = LocalDate.parse(billedSubscription.get().startDate()).getDayOfMonth();      //LEVEL 1
+
+                    Double[] prices = pricingReportMap.get(product.name());
+                    prices[month-1]  = Double.valueOf(df.format(billedPlan.getPrice() - billedPlan.getPrice()/30*day));
+                    for(int i=month; i < 12; i++){
+                        prices[i] = billedPlan.getPrice();
+                    }
+                    pricingReportMap.put(product.name(), prices);
+                //}       //LEVEL 1
+                
             }
-
-            Plan billedPlan = billedSubscription.plan();
-            int month = billedSubscription.starDate().getMonthValue();
-            int day = billedSubscription.starDate().getDayOfMonth();
-
-            DecimalFormat df = new DecimalFormat("#.##");
-            Double[] prices = pricingReportMap.get(product.Name());
-            prices[month-1]  = Double.valueOf(df.format(billedPlan.getPrice() - billedPlan.getPrice()/30*day));
-            for(int i=month; i < 12; i++){
-                prices[i] = billedPlan.getPrice();
-            }
-            pricingReportMap.put(product.Name(), prices);
-        }
+        //}     LEVEL 2
     }
-    */
-    
 }
