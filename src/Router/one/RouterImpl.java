@@ -17,26 +17,41 @@ public class RouterImpl implements Router {
     public RouterImpl withRoute(String path, String result) {
         //if(!path.contains("*")){      //LEVEL 1
         //if(!(path.contains("*") || path.contains(":"))){      //LEVEL 2
-            this.routeHandler.put(path, result);
-        //}
-        /*
-        else {          //LEVEL 1 & 2
-            String[] tokens = path.split("\\*",-1);  // "\\*" is regex, -1 for handling * at the end of pattern
+        if(path.isBlank() || result.isBlank()){
+            throw new RuntimeException("Arguments invalid");
+        }
+        /*if(path.contains("*") || path.contains(":")){     //LEVEL 2
+             
+             //LEVEL 1
+             String[] tokens = path.split("\\*",-1);  // "\\*" is regex, -1 for handling * at the end of pattern
                                                      // ":[^/]*" for LEVEL 2
                                                      // matches string after colon till forward slash.
+                                                     
+            ------------//LEVEL 2
+            String[] tokens;
+            if(path.contains("*"))
+                tokens = path.split("\\*", -1);
+            else
+                tokens = path.split(":[^/]*", -1);
+            ---------//LEVEL 2
             int len = tokens.length;
             StringBuilder regex = new StringBuilder();
             for(String token : tokens){
                 regex.append(token);
                 if((--len > 0))
-                    regex.append(".*");     //Regex: \/foo\/.*\/bar\/.*
-                                            //LEVEL 2 Regex: \/foo\/[^/]+\/bar\/[^/]+
-                                            // since lookup will not have colon params
+                    if(path.contains("*"))      //LEVEL 2
+                        regex.append(".*");     //LEVEL 1: Regex: \/foo\/.*\/bar\/.*
+                    else                        //LEVEL 2 Regex: \/foo\/[^/]+\/bar\/[^/]+
+                        regex.append("[^/]+");  // since lookup will not have colon params
             }
             Pattern pattern = Pattern.compile(regex.toString());
             this.patternHandler.add(Map.entry(pattern, result));
+        
         }
         */
+        //else {          //LEVEL 1 & 2
+            this.routeHandlers.put(path, endpoint);
+        //}
         return this;
     }
 
