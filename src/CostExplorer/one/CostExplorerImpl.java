@@ -20,13 +20,19 @@ public class CostExplorerImpl implements CostExplorer{
     CostExplorerImpl(Customer customer){
         pricingReportMap = new HashMap<>();
 
-        if(!customer.name().isEmpty() && customer.product()!= null) {
+        if(customer.name() != null && !customer.name().isEmpty() 
+           &&  customer.product() != null) {
+            // && customer.products() != null && !customer.products().isEmpty()){   //LEVEL 2
             this.product = customer.product();
 
-            Double[] expense = new Double[12];
-            Arrays.fill(expense, 0.00);
-            pricingReportMap.put(product.name(), expense);
-
+            //for(Product product : this.products){     //LEVEL 2
+                if(product.name() != null && !product.name().isEmpty()){ 
+                    Double[] expense = new Double[12];
+                    Arrays.fill(expense, 0.00);
+                    pricingReportMap.put(product.name(), expense);
+                }
+            //}
+            
             processBilling();
         }    
     }
@@ -40,7 +46,7 @@ public class CostExplorerImpl implements CostExplorer{
         int index = 0;
         while(index < 12){
             for(Double[] price : pricingReportMap.values()){
-                monthlyBill[index] += price[index];
+                monthlyBill[idx] = Double.valueOf(df.format(monthlyBill[idx] += price[idx]));
             }
             index++;
         }
@@ -62,26 +68,31 @@ public class CostExplorerImpl implements CostExplorer{
     /*-------- LEVEL 2 ----------
     @Override
     public Map<String, Double> yearlyCostPerProduct() {
-        Map<String, Double> result= pricingReportMap.entrySet().stream()
-                                    .collect(Collectors.toMap(e -> e.getKey(), e -> Arrays.asList(e.getValue()).stream().mapToDouble(Double::doubleValue).sum()));
-        //System.out.println(result);
+        Map<String, Double> result = productReportMap.entrySet().stream()
+                                .collect(Collectors.toMap(
+                                    e -> e.getKey(), 
+                                    e -> Double.valueOf(df.format(
+                                         Arrays.asList(e.getValue()).stream().mapToDouble(Double::doubleValue).sum()
+                                         ))
+                                    ));
         return result;
     }
 
     @Override
     public Double yearlyCostEstimate() {
         
-        return pricingReportMap.values().stream()
-        .mapToDouble(
-            d -> Arrays.stream(d).mapToDouble(Double::doubleValue).sum())
-            .sum();
+        return Double.valueOf(df.format(
+                productReportMap.values().stream().mapToDouble(
+                    d -> Arrays.stream(d).mapToDouble(Double::doubleValue).sum()
+                ).sum()
+                ));
     }
     -------- LEVEL 2 ----------*/
 
     private void processBilling(){
         //for(Product product : products){  //LEVEL 2
-            if(!product.name().isEmpty() && product.subscription() != null ){
-                //&& !product.subscriptions().isEmpty()){     //LEVEL 1
+            if(product.subscription() != null ){
+            //if(product.subcriptions() != null && !product.subcriptions().isEmpty()){ //LEVEL 1
                  Subscription billedSubscription = product.subscription();
                 //Optional<Subscription> billedSubscription = product.subscriptions().stream()    //LEVEL 1
                 //    .filter(o -> !o.plan().equals(Plan.TRIAL)).findAny(); //LEVEL 1
