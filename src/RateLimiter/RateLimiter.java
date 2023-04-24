@@ -17,43 +17,24 @@ public class RateLimiter {
 
     public boolean rateLimit(int customerId){
         long now = System.currentTimeMillis();
-        Customer customer = requestMap.computeIfAbsent(customerId, v -> new Customer(now));
+        Customer customer = requestMap.computeIfAbsent(customerId, v -> new Customer(customerId, now));
 
-        if(Duration.ofMillis(now - customer.startTime).getSeconds() >= TIMER ){
-            //int credit = Math.min(THRESHOLD - customer.requests, MAX_CREDITS);        //LEVEL 1
+        if(Duration.ofMillis(now - customer.getStartTime()).getSeconds() >= TIMER ){
+            //int credit = Math.min(THRESHOLD - customer.getRequests(), MAX_CREDITS);        //LEVEL 1
             customer.reset(now);
             //customer.reset(now, credit);      //LEVEL 1
         }
-        if(customer.requests < THRESHOLD){
-            customer.requests++;
+        if(customer.getRequests() < THRESHOLD){
+            customer.updateRequests();
             return true;
         }
         /*
-        else if(customer.credits > 0){      //LEVEL 1
-            customer.credits--;
+        else if(customer.getCredits() > 0){      //LEVEL 1
+            customer.updateCredits();
             return true;
         }
         */
         return false;
-    }
-
-    private class Customer{
-        private int requests;
-        private long startTime;
-        //private int credits;      //LEVEL 1
-
-        Customer(long startTime){
-            this.startTime = startTime;
-            this.requests = 0;
-            this.credits = 0;       //LEVEL 1
-        }
-
-        public void reset(long startTime){
-        //public void reset(long startTime, int credits){       //LEVEL 1
-            this.startTime = startTime;
-            this.requests = 0;
-            //this.credits = credits;       //LEVEL 1
-        }
     }
 }
 
